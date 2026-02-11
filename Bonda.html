@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Valentine</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: "Pacifico", cursive;
+        background-image: url('bg.jpg');
+        background-size: cover;
+        background-position: center;
+        height: 100vh;
+        position: relative;
+    }
+
+    /* QUESTION (Will you be my Valentine?) */
+    #question {
+        position: absolute;
+        top: 38%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 55px;
+        color: white;
+        text-align: center;
+        text-shadow: 0 0 18px rgba(255,150,170,0.9);
+        opacity: 0;
+        transition: opacity 2s ease;
+        white-space: pre-line;
+        z-index: 5; /* below buttons */
+    }
+
+    /* YES BUTTON */
+    #yesBtn {
+        position: absolute;
+        top: 53%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-family: "Pacifico", cursive;
+        font-size: 32px;
+        padding: 12px 40px;
+        border-radius: 18px;
+        border: none;
+        background: #ff87a1;
+        color: white;
+        cursor: pointer;
+        box-shadow: 0 0 20px rgba(255,150,170,0.8);
+        animation: bounce 2s infinite ease-in-out;
+        transition: opacity 1.5s ease;
+        z-index: 9999; /* CLICKABLE FIX */
+    }
+
+    @keyframes bounce {
+        0%,100% { transform: translate(-50%, -50%) scale(1); }
+        50% { transform: translate(-50%, -50%) scale(1.08); }
+    }
+
+    /* NO BUTTON */
+    #noBtn {
+        position: absolute;
+        top: 65%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: "Pacifico", cursive;
+        font-size: 32px;
+        padding: 12px 40px;
+        border-radius: 18px;
+        border: none;
+        background: #333;
+        color: white;
+        cursor: pointer;
+        transition: opacity 1.5s ease;
+        z-index: 9999; /* CLICKABLE FIX */
+    }
+
+    /* I LOVE YOU MESSAGE */
+    #loveMessage {
+        position: absolute;
+        top: 42%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 55px;
+        line-height: 1.6;
+        color: white;
+        text-align: center;
+        opacity: 0;
+        text-shadow: 0 0 20px rgba(255,100,130,1);
+        transition: opacity 2s ease;
+        white-space: pre-line;
+        z-index: 10;
+    }
+
+    /* WORD EFFECT */
+    .word {
+        display: inline-block;
+        opacity: 0;
+        white-space: pre;
+        animation: fadeWave 1.2s ease forwards;
+    }
+
+    @keyframes fadeWave {
+        0% { opacity: 0; transform: translateY(12px); }
+        50% { opacity: 1; transform: translateY(-6px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+</style>
+</head>
+
+<body>
+
+<!-- QUESTION -->
+<div id="question">Will you be my
+Valentine?</div>
+
+<!-- BUTTONS -->
+<button id="yesBtn" onclick="showLove()">Yes</button>
+<button id="noBtn">No</button>
+
+<!-- LOVE MESSAGE -->
+<div id="loveMessage">
+    <span id="line1">I Love You</span><br>
+    <span id="line2">Sruthi ❤️</span>
+</div>
+
+<script>
+/* --- NO BUTTON ESCAPE LOGIC --- */
+const noBtn = document.getElementById("noBtn");
+
+document.addEventListener("mousemove", (event) => {
+    const rect = noBtn.getBoundingClientRect();
+    const btnX = rect.left + rect.width / 2;
+    const btnY = rect.top + rect.height / 2;
+
+    const dist = Math.hypot(event.clientX - btnX, event.clientY - btnY);
+
+    if (dist < 150) {
+        let offsetX = (Math.random() * 240) - 120;
+        let offsetY = (Math.random() * 180) - 90;
+
+        let newLeft = rect.left + offsetX;
+        let newTop = rect.top + offsetY;
+
+        newLeft = Math.max(20, Math.min(window.innerWidth - rect.width - 20, newLeft));
+        newTop = Math.max(20, Math.min(window.innerHeight - rect.height - 20, newTop));
+
+        noBtn.style.left = newLeft + "px";
+        noBtn.style.top = newTop + "px";
+    }
+});
+
+/* --- WORD-BY-WORD EFFECT --- */
+function applyWordAnimation(id) {
+    const el = document.getElementById(id);
+    const words = el.innerText.split(" ");
+    el.innerHTML = "";
+
+    words.forEach((w, i) => {
+        const span = document.createElement("span");
+        span.className = "word";
+        span.innerText = w + " ";
+        span.style.animationDelay = (i * 0.3) + "s";
+        el.appendChild(span);
+    });
+}
+
+/* --- SHOW QUESTION ON LOAD --- */
+window.onload = () => {
+    const q = document.getElementById("question");
+    q.style.opacity = 1;
+    applyWordAnimation("question");
+};
+
+/* --- YES BUTTON CLICK --- */
+function showLove() {
+    document.getElementById("question").style.opacity = 0;
+    document.getElementById("yesBtn").style.opacity = 0;
+    document.getElementById("noBtn").style.opacity = 0;
+
+    setTimeout(() => {
+        document.getElementById("loveMessage").style.opacity = 1;
+
+        applyWordAnimation("line1");
+        setTimeout(() => applyWordAnimation("line2"), 700);
+    }, 1200);
+}
+</script>
+
+</body>
+</html>
